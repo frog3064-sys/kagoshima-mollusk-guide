@@ -1,4 +1,5 @@
 const DATA_URL = "data/species.csv";
+const PHOTOS_URL = "data/photos.csv";
 const root = document.querySelector("#detail");
 
 function csvParse(text) {
@@ -18,6 +19,7 @@ function csvParse(text) {
       cell = "";
     } else if ((c === "\n" || c === "\r") && !quoted) {
       if (c === "\r" && n === "\n") i++;
+
       row.push(cell);
       cell = "";
 
@@ -59,136 +61,261 @@ function esc(v) {
 }
 
 async function init() {
+
   const name = new URLSearchParams(location.search).get("name");
 
   try {
-    const r = await fetch(DATA_URL);
 
-    if (!r.ok) {
-      throw Error();
+    // species.csv と photos.csv を同時に読み込む
+    const [speciesResponse, photosResponse] = await Promise.all([
+      fetch(DATA_URL),
+      fetch(PHOTOS_URL)
+    ]);
+
+    if (!speciesResponse.ok) {
+      throw Error("species.csvを読み込めません");
     }
 
-    const data = csvParse(await r.text());
-    const s = data.find(x => x.和名 === name);
+    if (!photosResponse.ok) {
+      throw Error("photos.csvを読み込めません");
+    }
+
+    const speciesData = csvParse(await speciesResponse.text());
+    const photoData = csvParse(await photosResponse.text());
+
+    // 和名から種を探す
+    const s = speciesData.find(x => x.和名 === name);
 
     if (!s) {
+
       root.innerHTML = `
         <section class="detail-section">
           <h2>種が見つかりません</h2>
           <p>図鑑一覧から選び直してください。</p>
         </section>
       `;
+
       return;
     }
 
-    document.title = `${s.和名} | 鹿児島県産貝類図鑑`;
+    document.title =
+      `${s.和名} | 鹿児島県産貝類図鑑`;
 
-    // 写真1〜写真4を取得
-    const photos = [
-      s.写真1,
-      s.写真2,
-      s.写真3,
-      s.写真4
-    ].filter(Boolean);
+    // SpeciesIDが一致する写真だけ取得
+    const speciesPhotos =
+      photoData.filter(x => x.SpeciesID === s.SpeciesID);
 
+    // -------------------------
     // 写真表示
+    // -------------------------
+
     let photoHTML = "";
 
-    if (photos.length > 0) {
-      photoHTML = `
-        <div class="photo-gallery">
-          ${photos.map((photo, i) => `
-            <a href="${esc(photo)}" target="_blank">
-              <img
-                src="${esc(photo)}"
-                alt="${esc(s.和名)} 写真${i + 1}"
-                class="gallery-photo"
-              >
-            </a>
-          `).join("")}
-        </div>
-      `;
+    if (speciesPhotos.length > 0) {
+
+      // 産地ごとにグループ化
+      const locations = {};
+
+      speciesPhotos.forEach(photo => {
+
+        const location =
+          photo.産地 || "産地情報なし";
+
+        if (!locations[location]) {
+          locations[location] = [];
+        }
+
+        locations[location].push(photo);
+
+      });
+
+      photoHTML = Object.entries(locations)
+        .map(([location, photos]) => {
+
+          return `
+            <div class="photo-location">
+
+              <h3 class="photo-location-title">
+                ${esc(location)}
+              </h3>
+
+              <div class="photo-gallery">
+
+                ${photos.map((photo, i) => `
+                  
+                  <div class="photo-item">
+
+                    <a
+                      href="${esc(photo.写真)}"
+                      target="_blank"
+                    >
+                      <img
+                        src="${esc(photo.写真)}"
+                        alt="${esc(s.和名)} ${esc(photo.備考 || "")}"
+                        class="gallery-photo"
+                      >
+                    </a>
+
+                    ${
+                      photo.備考
+                        ? `<div class="photo-caption">
+                             ${esc(photo.備考)}
+                           </div>`
+                        : ""
+                    }
+
+                  </div>
+
+                `).join("")}
+
+              </div>
+
+            </div>
+          `;
+
+        })
+        .join("");
+
     } else {
+
       photoHTML = `
         <div class="detail-no-photo">
           写真準備中
         </div>
       `;
+
     }
 
+    // -------------------------
     // 種情報
+    // -------------------------
+
     const rows = [
+
       ["和名", s.和名],
+
       ["学名", s.学名],
+
       ["科", s.科],
+
       ["属", s.属],
+
       ["産地", s.産地_公開],
+
       ["水深", s.水深],
+
       ["生息環境", s.生息環境],
+
       ["緯度", s.緯度],
+
       ["経度", s.経度],
+
       ["文献", s.文献],
+
       ["備考", s.備考]
+
     ].filter(x => x[1]);
 
+    // -------------------------
+    // HTML
+    // -------------------------
+
     root.innerHTML = `
+
       <div class="detail-hero">
 
-        ${photoHTML}
-
         <div class="detail-info">
-          <div class="family">${esc(s.科)}</div>
 
-          <h1>${esc(s.和名)}</h1>
+          <div class="family">
+            ${esc(s.科)}
+          </div>
+
+          <h1>
+            ${esc(s.和名)}
+          </h1>
 
           <div class="latin">
             ${esc(s.学名)}
           </div>
+
         </div>
 
       </div>
 
+
       <section class="detail-section">
+
+        <h2>標本写真</h2>
+
+        ${photoHTML}
+
+      </section>
+
+
+      <section class="detail-section">
+
         <h2>種情報</h2>
 
         <table class="detail-table">
 
           ${rows.map(r => `
+
             <tr>
-              <th>${esc(r[0])}</th>
-              <td>${esc(r[1]).replaceAll(";", "・")}</td>
+
+              <th>
+                ${esc(r[0])}
+              </th>
+
+              <td>
+                ${esc(r[1]).replaceAll(";", "・")}
+              </td>
+
             </tr>
+
           `).join("")}
 
         </table>
 
       </section>
 
+
       <section class="detail-section">
 
         <h2>備考</h2>
 
         <p>
-          ${esc(s.備考 || "現在、備考はありません。")}
+          ${esc(
+            s.備考 ||
+            "現在、備考はありません。"
+          )}
         </p>
 
       </section>
+
     `;
 
   } catch (e) {
 
+    console.error(e);
+
     root.innerHTML = `
+
       <section class="detail-section">
 
-        <h2>データを読み込めませんでした</h2>
+        <h2>
+          データを読み込めませんでした
+        </h2>
 
         <p>
           Webサーバー上で開いているか確認してください。
         </p>
 
       </section>
+
     `;
+
   }
+
 }
 
 init();
