@@ -1,7 +1,9 @@
 const DATA_URL="data/species.csv";
+const PHOTOS_URL="data/photos.csv";
 const search=document.querySelector("#search"), family=document.querySelector("#family"), locality=document.querySelector("#locality");
 const grid=document.querySelector("#speciesGrid"), count=document.querySelector("#count"), total=document.querySelector("#speciesTotal");
 let species=[];
+let photos=[];
 
 function csvParse(text){
   const rows=[];let row=[],cell="",quoted=false;
@@ -21,6 +23,10 @@ function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 function slug(s){return encodeURIComponent(s.和名)}
 function render(){
  const q=search.value.trim().toLowerCase(),f=family.value,l=locality.value;
+  function getPhoto(speciesID){
+  const p=photos.find(x=>x.SpeciesID===speciesID);
+  return p ? p.写真 : "";
+}
  const filtered=species.filter(s=>{
    const hay=[s.和名,s.学名,s.科,s.属,s.産地,s.備考].join(" ").toLowerCase();
    return (!q||hay.includes(q))&&(!f||s.科===f)&&(!l||s.産地.includes(l));
@@ -28,13 +34,22 @@ function render(){
  count.textContent=`${filtered.length} 種を表示`;
  grid.innerHTML=filtered.length?filtered.map(s=>`
  <article class="card"><a class="card-link" href="species.html?name=${slug(s)}">
- ${s.写真?`<img class="card-image" src="${esc(s.写真)}" alt="${esc(s.和名)}" loading="lazy">`:`<div class="no-image">写真準備中</div>`}
+${getPhoto(s.SpeciesID)?`<img class="card-image" src="${esc(getPhoto(s.SpeciesID))}" alt="${esc(s.和名)}" loading="lazy">`:`<div class="no-image">写真準備中</div>`}
  <div class="card-body"><h3>${esc(s.和名)}</h3><p class="scientific">${esc(s.学名)}</p>
  <p class="meta"><strong>科：</strong>${esc(s.科)}</p><p class="meta"><strong>産地：</strong>${esc(s.産地)}</p>
  <span class="badge">${esc(s.生息環境||"情報準備中")}</span></div></a></article>`).join(""):`<div class="empty">該当する種がありません。</div>`;
 }
 async function init(){
- try{const r=await fetch(DATA_URL);if(!r.ok)throw Error();species=csvParse(await r.text());total.textContent=species.length;fill(family,vals("科"));fill(locality,vals("産地"));[search,family,locality].forEach(x=>x.addEventListener("input",render));render()}
+ try{const [speciesResponse, photosResponse] = await Promise.all([
+  fetch(DATA_URL),
+  fetch(PHOTOS_URL)
+]);
+
+if(!speciesResponse.ok)throw Error();
+if(!photosResponse.ok)throw Error();
+
+species=csvParse(await speciesResponse.text());
+photos=csvParse(await photosResponse.text());total.textContent=species.length;fill(family,vals("科"));fill(locality,vals("産地"));[search,family,locality].forEach(x=>x.addEventListener("input",render));render()}
  catch(e){grid.innerHTML='<div class="empty">データを読み込めませんでした。GitHub PagesなどのWebサーバー上で開いてください。</div>'}
 }
 init();
