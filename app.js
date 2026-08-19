@@ -156,11 +156,6 @@ function render(){
             <p class="meta">
               <strong>科：</strong>${esc(s.科)}
             </p>
-
-            <p class="meta">
-              <strong>産地：</strong>${esc(s.産地)}
-            </p>
-
             <span class="badge">
               ${esc(s.生息環境||"情報準備中")}
             </span>
