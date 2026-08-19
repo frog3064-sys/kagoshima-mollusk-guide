@@ -45,7 +45,21 @@ input:focus,select:focus{outline:2px solid #a7cabc;outline-offset:1px}
 .no-image{color:var(--muted)}
 .card-body{padding:19px 20px 22px}
 .card h3{font-family:Georgia,"Times New Roman","Noto Serif JP",serif;font-size:1.4rem;font-weight:500;margin:0}
-.scientific{font-family:Georgia,serif;font-style:italic;color:var(--muted);margin:3px 0 12px}
+.scientific{
+  font-family:Georgia,"Times New Roman",serif;
+  color:var(--muted);
+  margin:4px 0 10px;
+  font-size:.95rem;
+}
+
+.scientific em{
+  font-style:italic;
+}
+
+.author{
+  margin-left:5px;
+  font-style:normal;
+}
 .meta{font-size:.88rem;color:var(--muted);margin:3px 0}
 .badge{display:inline-block;margin-top:11px;padding:3px 9px;background:#e6f0ec;color:var(--green);border-radius:999px;font-size:.75rem;font-weight:700}
 .empty{grid-column:1/-1;text-align:center;padding:50px;background:white;border:1px dashed var(--line);color:var(--muted)}

@@ -149,8 +149,9 @@ function render(){
             <h3>${esc(s.和名)}</h3>
 
             <p class="scientific">
-              ${esc(s.学名)}
-            </p>
+  <em>${esc(s.学名)}</em>
+  ${s.命名者 ? `<span class="author">${esc(s.命名者)}</span>` : ""}
+</p>
 
             <p class="meta">
               <strong>科：</strong>${esc(s.科)}
