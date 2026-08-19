@@ -101,6 +101,25 @@ function render(){
   const l=locality.value;
 
   const filtered=species.filter(s=>{
+  const thumbnail=getThumbnail(s.SpeciesID);
+
+  if(!thumbnail) return false;
+
+  const hay=[
+    s.和名,
+    s.学名,
+    s.科,
+    s.属,
+    s.産地,
+    s.備考
+  ].join(" ").toLowerCase();
+
+  return (
+    (!q||hay.includes(q)) &&
+    (!f||s.科===f) &&
+    (!l||s.産地.includes(l))
+  );
+});
 
     const hay=[
       s.和名,
