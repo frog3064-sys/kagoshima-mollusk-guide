@@ -50,7 +50,9 @@ function csvParse(text) {
     rows.push(row);
   }
 
-  const headers = rows.shift().map(x => x.trim());
+  const headers = rows.shift().map(x =>
+  x.replace(/^\uFEFF/, "").trim()
+);
 
   return rows.map(r =>
     Object.fromEntries(
