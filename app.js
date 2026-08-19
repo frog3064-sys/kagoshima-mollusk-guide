@@ -150,7 +150,7 @@ function render(){
 
             <p class="scientific">
   <em>${esc(s.学名)}</em>
-  ${s.著者名 ? `<span class="author">${esc(s.著者名)}</span>` : ""}
+  ${s.命名者 ? `<span class="author">${esc(s.命名者)}</span>` : ""}
 </p>
 
             <p class="meta">
