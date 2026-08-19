@@ -153,9 +153,8 @@ function render(){
   ${s.命名者 ? `<span class="author">${esc(s.命名者)}</span>` : ""}
 </p>
 
-            <p class="meta">
-              <strong>科：</strong>${esc(s.科)}
-            </p>
+            <p class="meta">${esc(s.科)}科</p>
+            
             <span class="badge">
               ${esc(s.生息環境||"情報準備中")}
             </span>
