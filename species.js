@@ -242,7 +242,27 @@ async function init() {
 
       </div>
 
+${
+  s.同定のポイント
+    ? `
+      <section class="detail-section">
 
+        <h2>同定のポイント</h2>
+
+        <p>
+          ${esc(s.同定のポイント)}
+        </p>
+
+      </section>
+    `
+    : ""
+}
+
+<section class="detail-section">
+
+  <h2>種情報</h2>
+
+  <table class="detail-table">
       <section class="detail-section">
 
         <h2>標本写真</h2>
