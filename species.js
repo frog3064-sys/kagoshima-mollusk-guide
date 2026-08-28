@@ -55,20 +55,30 @@ root.innerHTML = `
 
 
   ${
-    s.同定のポイント
-      ? `
-        <section class="detail-section">
+  s.同定のポイント
+    ? `
+      <section class="detail-section">
 
-          <h2>同定のポイント</h2>
+        <h2>同定のポイント</h2>
 
-          <p>
-            ${esc(s.同定のポイント)}
-          </p>
+        <ul class="identification-points">
 
-        </section>
-      `
-      : ""
-  }
+          ${s.同定のポイント
+            .split(";")
+            .map(point => point.trim())
+            .filter(point => point)
+            .map(point => `
+              <li>${esc(point)}</li>
+            `)
+            .join("")
+          }
+
+        </ul>
+
+      </section>
+    `
+    : ""
+}
 
 
   <section class="detail-section">
