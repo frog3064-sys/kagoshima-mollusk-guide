@@ -1,76 +1,241 @@
+```html
 <!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>鹿児島県産貝類図鑑</title>
-<meta name="description" content="鹿児島県産貝類を写真・分類・産地・文献から調べるオンライン図鑑">
+
+<meta
+  name="description"
+  content="鹿児島県産貝類を写真・分類・産地・文献から調べるオンライン図鑑"
+>
+
 <link rel="stylesheet" href="style.css">
 </head>
+
+
 <body>
+
+
 <header class="hero">
+
   <div class="hero-overlay">
+
     <div class="wrap">
-      <p class="eyebrow">MOLLUSCA OF KAGOSHIMA</p>
-      <h1>鹿児島県産<br><span>貝類図鑑</span></h1>
-      <p class="lead">鹿児島県から記録された貝類を、分類・産地・文献から調べるためのオンライン図鑑。</p>
+
+      <!-- ナビゲーション -->
+
+      <nav class="main-nav">
+
+        <a href="index.html">
+          図鑑
+        </a>
+
+        <a href="references.html">
+          文献
+        </a>
+
+      </nav>
+
+
+      <p class="eyebrow">
+        MOLLUSCA OF KAGOSHIMA
+      </p>
+
+
+      <h1>
+        鹿児島県産<br>
+        <span>貝類図鑑</span>
+      </h1>
+
+
+      <p class="lead">
+        鹿児島県から記録された貝類を、分類・産地・文献から調べるためのオンライン図鑑。
+      </p>
+
     </div>
+
   </div>
+
 </header>
 
+
 <main>
+
+
 <section class="intro wrap">
+
   <div>
-    <p class="section-kicker">KAGOSHIMA MOLLUSK GUIDE</p>
-    <h2>南北600kmの水陸に生きる貝</h2>
-    <p>種の写真、学名、分類、産地、生息環境などをまとめています。下の検索欄から目的の種を探してください。</p>
+
+    <p class="section-kicker">
+      KAGOSHIMA MOLLUSK GUIDE
+    </p>
+
+    <h2>
+      南北600kmの水陸に生きる貝
+    </h2>
+
+    <p>
+      種の写真、学名、分類、産地、生息環境などをまとめています。
+      下の検索欄から目的の種を探してください。
+    </p>
+
   </div>
+
+
   <div class="intro-stats">
-    <strong id="speciesTotal">—</strong><span>掲載種</span>
+
+    <strong id="speciesTotal">
+      —
+    </strong>
+
+    <span>
+      掲載種
+    </span>
+
   </div>
+
 </section>
+
+
 
 <section id="species" class="catalog wrap">
+
+
   <div class="catalog-head">
+
     <div>
-      <p class="section-kicker">SPECIES CATALOG</p>
-      <h2>種を探す</h2>
+
+      <p class="section-kicker">
+        SPECIES CATALOG
+      </p>
+
+      <h2>
+        種を探す
+      </h2>
+
     </div>
+
     <p id="count" class="count"></p>
+
   </div>
+
+
 
   <div class="controls">
+
+
     <label>
-      <span>🔎 キーワード</span>
-      <input id="search" type="search" placeholder="和名・学名・科・産地…">
+
+      <span>
+        🔎 キーワード
+      </span>
+
+      <input
+        id="search"
+        type="search"
+        placeholder="和名・学名・科・産地…"
+      >
+
     </label>
+
+
     <label>
-      <span>科</span>
-      <select id="family"><option value="">すべて</option></select>
+
+      <span>
+        科
+      </span>
+
+      <select id="family">
+
+        <option value="">
+          すべて
+        </option>
+
+      </select>
+
     </label>
+
+
     <label>
-      <span>産地</span>
-      <select id="locality"><option value="">すべて</option></select>
+
+      <span>
+        産地
+      </span>
+
+      <select id="locality">
+
+        <option value="">
+          すべて
+        </option>
+
+      </select>
+
     </label>
+
+
   </div>
 
-  <section id="speciesGrid" class="grid" aria-live="polite"></section>
+
+
+  <section
+    id="speciesGrid"
+    class="grid"
+    aria-live="polite"
+  ></section>
+
+
 </section>
+
+
 </main>
 
+
+
 <footer>
+
   <div class="wrap footer-grid">
+
+
     <div>
-      <p class="eyebrow">KAGOSHIMA MOLLUSK GUIDE</p>
-      <h2>鹿児島県産貝類図鑑</h2>
-      <p>Research / Collection / Biodiversity</p>
+
+      <p class="eyebrow">
+        KAGOSHIMA MOLLUSK GUIDE
+      </p>
+
+      <h2>
+        鹿児島県産貝類図鑑
+      </h2>
+
+      <p>
+        Research / Collection / Biodiversity
+      </p>
+
     </div>
+
+
     <div>
-      <p>写真・標本・文献情報の著作権および利用条件を各データに明記してください。</p>
-      <p>© 2026 鹿児島貝拾いの会</p>
+
+      <p>
+        写真・標本・文献情報の著作権および利用条件を各データに明記してください。
+      </p>
+
+      <p>
+        © 2026 鹿児島貝拾いの会
+      </p>
+
     </div>
+
+
   </div>
+
 </footer>
+
+
 <script src="app.js"></script>
+
 </body>
 </html>
+```
