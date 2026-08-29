@@ -107,14 +107,14 @@ function esc(value) {
 
 
 // ------------------------------------------------------------
-// URLからSpeciesIDを取得
+// URLからSpeciesIDまたは種名を取得
 // ------------------------------------------------------------
 
 function getSpeciesID() {
 
   const params = new URLSearchParams(location.search);
 
-  return params.get("id");
+  return params.get("id") || params.get("name");
 }
 
 
