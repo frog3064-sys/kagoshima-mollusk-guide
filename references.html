@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>鹿児島県関連貝類文献 | 鹿児島県産貝類図鑑</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="small-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">鹿児島県産貝類図鑑</a>
+  </div>
+</header>
+
+<main class="wrap references-wrap">
+
+  <a class="back" href="index.html">
+    ← トップページへ戻る
+  </a>
+
+  <section class="references-hero">
+    <h1>鹿児島県関連貝類文献</h1>
+
+    <p>
+      鹿児島県およびその周辺地域の貝類に関する文献一覧
+    </p>
+  </section>
+
+
+  <section class="reference-controls">
+
+    <input
+      type="search"
+      id="referenceSearch"
+      placeholder="著者・タイトル・雑誌名などで検索"
+    >
+
+    <select id="referenceLocality">
+      <option value="">すべての地域</option>
+
+      <option value="鹿児島県全域">鹿児島県全域</option>
+      <option value="鹿児島湾">鹿児島湾</option>
+      <option value="北薩">北薩</option>
+      <option value="南薩">南薩</option>
+      <option value="大隅">大隅</option>
+      <option value="甑島列島">甑島列島</option>
+
+      <option value="種子島">種子島</option>
+      <option value="馬毛島">馬毛島</option>
+      <option value="屋久島">屋久島</option>
+      <option value="口永良部島">口永良部島</option>
+
+      <option value="口之島">口之島</option>
+      <option value="中之島">中之島</option>
+      <option value="平島">平島</option>
+      <option value="諏訪之瀬島">諏訪之瀬島</option>
+      <option value="悪石島">悪石島</option>
+      <option value="小宝島">小宝島</option>
+      <option value="宝島">宝島</option>
+
+      <option value="奄美大島">奄美大島</option>
+      <option value="加計呂麻島">加計呂麻島</option>
+      <option value="請島">請島</option>
+      <option value="与路島">与路島</option>
+      <option value="喜界島">喜界島</option>
+      <option value="徳之島">徳之島</option>
+      <option value="沖永良部島">沖永良部島</option>
+      <option value="与論島">与論島</option>
+    </select>
+
+  </section>
+
+
+  <p id="referenceCount" class="reference-count"></p>
+
+  <section id="referenceList" class="reference-list"></section>
+
+</main>
+
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 Kagoshima Mollusk Guide</p>
+  </div>
+</footer>
+
+<script src="references.js"></script>
+
+</body>
+</html>
