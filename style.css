@@ -112,3 +112,24 @@ footer p{font-size:.82rem;color:#c7d8d2}
     grid-template-columns: 1fr;
   }
 }
+/* =========================================================
+   メインナビゲーション
+========================================================= */
+
+.main-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.main-nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.main-nav a:hover {
+  text-decoration: underline;
+}
