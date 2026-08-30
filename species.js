@@ -110,11 +110,11 @@ function esc(value) {
 // URLからSpeciesIDまたは種名を取得
 // ------------------------------------------------------------
 
-function getSpeciesID() {
+function getSpeciesName() {
 
   const params = new URLSearchParams(location.search);
 
-  return params.get("id") || params.get("name");
+  return params.get("name");
 }
 
 
@@ -218,18 +218,16 @@ async function loadSpecies() {
     const photos = csvParse(photosText);
 
 
-    // URLのID
-    const speciesID = getSpeciesID();
-
-
     // --------------------------------------------------------
-    // 対象種を検索
-    // --------------------------------------------------------
+// URLから種名を取得して対象種を検索
+// --------------------------------------------------------
 
-    const s = species.find(row =>
-      String(row.SpeciesID).trim() === String(speciesID).trim()
-    );
+const speciesName = getSpeciesName();
 
+const s = species.find(row =>
+  String(row.和名 ?? "").trim() ===
+  String(speciesName ?? "").trim()
+);
 
     // --------------------------------------------------------
     // 種が見つからない場合
@@ -243,7 +241,7 @@ async function loadSpecies() {
           <h1>種が見つかりません</h1>
 
           <p>
-            指定されたSpeciesIDの種情報がありません。
+            指定された種の情報がありません。
           </p>
 
         </section>
