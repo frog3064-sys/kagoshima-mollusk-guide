@@ -76,6 +76,15 @@ function esc(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+function hasValue(value) {
+  const v = String(value ?? "").trim();
+
+  return (
+    v !== "" &&
+    v.toUpperCase() !== "NA" &&
+    v.toUpperCase() !== "#N/A"
+  );
+}
 
 function renderReferences(data) {
 
@@ -94,23 +103,45 @@ function renderReferences(data) {
 
     <article class="reference-card">
 
-      <div class="reference-meta">
-        ${esc(r.author)}
-        ${r.year ? ` (${esc(r.year)})` : ""}
-      </div>
-
-      <h2 class="reference-title">
-        ${esc(r.title)}
-      </h2>
+      ${
+        hasValue(r.author) || hasValue(r.year)
+          ? `
+            <div class="reference-meta">
+              ${hasValue(r.author) ? esc(r.author) : ""}
+              ${hasValue(r.year) ? ` (${esc(r.year)})` : ""}
+            </div>
+          `
+          : ""
+      }
 
       ${
-        r.journal
+        hasValue(r.title)
+          ? `
+            <h2 class="reference-title">
+              ${esc(r.title)}
+            </h2>
+          `
+          : ""
+      }
+
+      ${
+        hasValue(r.journal)
           ? `
             <div class="reference-journal">
               <em>${esc(r.journal)}</em>
-              ${r.volume ? ` ${esc(r.volume)}` : ""}
-              ${r.issue ? `(${esc(r.issue)})` : ""}
-              ${r.pages ? `: ${esc(r.pages)}` : ""}
+              ${hasValue(r.volume) ? ` ${esc(r.volume)}` : ""}
+              ${hasValue(r.issue) ? `(${esc(r.issue)})` : ""}
+              ${hasValue(r.pages) ? `: ${esc(r.pages)}` : ""}
+            </div>
+          `
+          : ""
+      }
+
+      ${
+        hasValue(r.DOI)
+          ? `
+            <div class="reference-doi">
+              DOI: ${esc(r.DOI)}
             </div>
           `
           : ""
@@ -121,7 +152,7 @@ function renderReferences(data) {
           String(r.locality ?? "")
             .split(";")
             .map(x => x.trim())
-            .filter(Boolean)
+            .filter(x => hasValue(x))
             .map(x => `
               <span class="reference-tag">
                 ${esc(x)}
@@ -197,7 +228,10 @@ async function loadReferences() {
       await response.text();
 
     const allReferences =
-      csvParse(text);
+  csvParse(text).filter(r =>
+    r.importance === "1" ||
+    r.importance === "2"
+  );
 
     filterReferences(allReferences);
 
