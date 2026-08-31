@@ -228,10 +228,23 @@ async function loadReferences() {
       await response.text();
 
     const allReferences =
-  csvParse(text).filter(r =>
-    r.importance === "1" ||
-    r.importance === "2"
-  );
+  csvParse(text)
+    .filter(r =>
+      r.importance === "1" ||
+      r.importance === "2"
+    )
+    .sort((a, b) => {
+      const authorCompare = String(a.author ?? "").localeCompare(
+        String(b.author ?? ""),
+        "en"
+      );
+
+      if (authorCompare !== 0) {
+        return authorCompare;
+      }
+
+      return Number(a.year) - Number(b.year);
+    });
 
     filterReferences(allReferences);
 
