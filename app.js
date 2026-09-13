@@ -217,13 +217,18 @@ async function init() {
     );
 
     thumbnails = csvParse(
-      await thumbnailsResponse.text()
-    );
+  await thumbnailsResponse.text()
+);
 
-    total.textContent = species.length;
+/* サムネイルがある種だけを掲載種数としてカウント */
+const speciesWithThumbnail = species.filter(
+  s => getThumbnail(s.SpeciesID)
+);
 
-    fill(family, vals("科"));
-    fill(locality, vals("産地"));
+total.textContent = speciesWithThumbnail.length;
+
+fill(family, vals("科"));
+fill(locality, vals("産地"));
 
     [search, family, locality].forEach(
       x => x.addEventListener("input", render)
