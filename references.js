@@ -5,6 +5,7 @@ const count = document.querySelector("#referenceCount");
 const searchInput = document.querySelector("#referenceSearch");
 const localitySelect = document.querySelector("#referenceLocality");
 
+
 function csvParse(text) {
   const rows = [];
   let row = [];
@@ -68,6 +69,7 @@ function csvParse(text) {
     });
 }
 
+
 function esc(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -76,6 +78,8 @@ function esc(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+
+
 function hasValue(value) {
   const v = String(value ?? "").trim();
 
@@ -85,6 +89,76 @@ function hasValue(value) {
     v.toUpperCase() !== "#N/A"
   );
 }
+
+
+/* =========================================================
+   産地の地域分類
+========================================================= */
+
+function getLocalityClass(locality) {
+
+  const x = String(locality ?? "").trim();
+
+  // 鹿児島県全域
+  if (x === "鹿児島県全域") {
+    return "locality-all";
+  }
+
+  // 本土
+  if (
+    [
+      "北薩",
+      "南薩",
+      "大隅"
+    ].includes(x)
+  ) {
+    return "locality-mainland";
+  }
+
+  // 島しょ域
+  if (
+    [
+      "甑島列島",
+      "種子島",
+      "馬毛島",
+      "屋久島",
+      "口永良部島",
+      "口之島",
+      "中之島",
+      "平島",
+      "諏訪之瀬島",
+      "悪石島",
+      "小宝島",
+      "宝島"
+    ].includes(x)
+  ) {
+    return "locality-islands";
+  }
+
+  // 奄美群島
+  if (
+    [
+      "奄美大島",
+      "加計呂麻島",
+      "請島",
+      "与路島",
+      "喜界島",
+      "徳之島",
+      "沖永良部島",
+      "与論島"
+    ].includes(x)
+  ) {
+    return "locality-amami";
+  }
+
+  // その他
+  return "locality-other";
+}
+
+
+/* =========================================================
+   文献表示
+========================================================= */
 
 function renderReferences(data) {
 
@@ -154,7 +228,7 @@ function renderReferences(data) {
             .map(x => x.trim())
             .filter(x => hasValue(x))
             .map(x => `
-              <span class="reference-tag">
+              <span class="reference-tag ${getLocalityClass(x)}">
                 ${esc(x)}
               </span>
             `)
@@ -166,6 +240,11 @@ function renderReferences(data) {
 
   `).join("");
 }
+
+
+/* =========================================================
+   検索・地域絞り込み
+========================================================= */
 
 function filterReferences(allReferences) {
 
@@ -179,6 +258,7 @@ function filterReferences(allReferences) {
 
     const searchableText = [
       r.author,
+      r.author_roman,
       r.year,
       r.title,
       r.journal,
@@ -196,6 +276,7 @@ function filterReferences(allReferences) {
     }
 
     if (locality) {
+
       const localities = String(r.locality ?? "")
         .split(";")
         .map(x => x.trim());
@@ -210,6 +291,11 @@ function filterReferences(allReferences) {
 
   renderReferences(filtered);
 }
+
+
+/* =========================================================
+   CSV読み込み
+========================================================= */
 
 async function loadReferences() {
 
@@ -227,34 +313,66 @@ async function loadReferences() {
     const text =
       await response.text();
 
+
+    /* -----------------------------------------------------
+       importance → author_roman → year の順に並べる
+    ----------------------------------------------------- */
+
     const allReferences =
-  csvParse(text)
-    .filter(r =>
-      r.importance === "1" ||
-      r.importance === "2"
-    )
-    .sort((a, b) => {
-      const authorCompare = String(a.author ?? "").localeCompare(
-        String(b.author ?? ""),
-        "en"
-      );
+      csvParse(text)
+        .filter(r =>
+          r.importance === "1" ||
+          r.importance === "2"
+        )
+        .sort((a, b) => {
 
-      if (authorCompare !== 0) {
-        return authorCompare;
-      }
+          // ① importance
+          const importanceCompare =
+            Number(a.importance) - Number(b.importance);
 
-      return Number(a.year) - Number(b.year);
-    });
+          if (importanceCompare !== 0) {
+            return importanceCompare;
+          }
+
+          // ② author_roman
+          const authorCompare =
+            String(a.author_roman ?? "").localeCompare(
+              String(b.author_roman ?? ""),
+              "en",
+              { sensitivity: "base" }
+            );
+
+          if (authorCompare !== 0) {
+            return authorCompare;
+          }
+
+          // ③ year
+          const yearA = Number(a.year);
+          const yearB = Number(b.year);
+
+          if (!Number.isNaN(yearA) && !Number.isNaN(yearB)) {
+            return yearA - yearB;
+          }
+
+          return String(a.year ?? "").localeCompare(
+            String(b.year ?? ""),
+            "en"
+          );
+        });
+
 
     filterReferences(allReferences);
+
 
     searchInput.addEventListener("input", () => {
       filterReferences(allReferences);
     });
 
+
     localitySelect.addEventListener("change", () => {
       filterReferences(allReferences);
     });
+
 
   } catch (error) {
 
@@ -267,5 +385,6 @@ async function loadReferences() {
     `;
   }
 }
+
 
 loadReferences();

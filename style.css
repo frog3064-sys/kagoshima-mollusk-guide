@@ -926,4 +926,320 @@ font-size: 1.35rem;
 }
 
 }
+/* =========================================================
+   文献ページ
+========================================================= */
 
+.references-wrap {
+  padding: 45px 0 90px;
+}
+
+
+/* ---------------------------------------------------------
+   文献ページ：タイトル
+--------------------------------------------------------- */
+
+.references-hero {
+  margin: 28px 0 30px;
+}
+
+.references-hero h1 {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    "Noto Serif JP",
+    serif;
+
+  font-weight: 500;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  line-height: 1.2;
+
+  margin: 0 0 12px;
+}
+
+.references-hero p {
+  margin: 0;
+  color: var(--muted);
+}
+
+
+/* ---------------------------------------------------------
+   文献ページ：検索・地域選択
+--------------------------------------------------------- */
+
+.reference-controls {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+
+  margin-bottom: 24px;
+  padding: 18px;
+
+  background: var(--sand);
+  border: 1px solid #e9e3d6;
+  border-radius: 14px;
+}
+
+
+/* ---------------------------------------------------------
+   文献件数
+--------------------------------------------------------- */
+
+.reference-count {
+  margin: 0 0 16px;
+
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+
+/* ---------------------------------------------------------
+   文献一覧
+--------------------------------------------------------- */
+
+.reference-list {
+  display: grid;
+  gap: 18px;
+}
+
+
+/* ---------------------------------------------------------
+   文献カード
+--------------------------------------------------------- */
+
+.reference-card {
+  padding: 24px 26px;
+
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+
+  box-shadow: 0 8px 25px rgba(27, 55, 45, .07);
+
+  transition:
+    transform .2s,
+    box-shadow .2s;
+}
+
+.reference-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(27, 55, 45, .11);
+}
+
+
+/* ---------------------------------------------------------
+   著者・年
+--------------------------------------------------------- */
+
+.reference-meta {
+  margin-bottom: 7px;
+
+  color: var(--muted);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: .95rem;
+}
+
+
+/* ---------------------------------------------------------
+   タイトル
+--------------------------------------------------------- */
+
+.reference-title {
+  margin: 0 0 9px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    "Noto Serif JP",
+    serif;
+
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.45;
+
+  color: var(--ink);
+}
+
+
+/* ---------------------------------------------------------
+   雑誌名・巻号・ページ
+--------------------------------------------------------- */
+
+.reference-journal {
+  color: var(--muted);
+
+  font-size: .9rem;
+  line-height: 1.6;
+}
+
+.reference-journal em {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-style: italic;
+}
+
+
+/* ---------------------------------------------------------
+   DOI
+--------------------------------------------------------- */
+
+.reference-doi {
+  margin-top: 8px;
+
+  color: #7b8581;
+
+  font-size: .78rem;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* ---------------------------------------------------------
+   産地タグ
+--------------------------------------------------------- */
+
+.reference-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  margin-top: 16px;
+}
+
+.reference-tag {
+  display: inline-block;
+
+  padding: 4px 10px;
+
+  background: #e6f0ec;
+  color: var(--green);
+
+  border: 1px solid #d3e4de;
+  border-radius: 999px;
+
+  font-size: .76rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+
+/* ---------------------------------------------------------
+   検索結果なし
+--------------------------------------------------------- */
+
+.no-results {
+  margin: 0;
+
+  padding: 45px 20px;
+
+  text-align: center;
+
+  background: white;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+
+  color: var(--muted);
+}
+
+
+/* ---------------------------------------------------------
+   文献ページ：スマートフォン
+--------------------------------------------------------- */
+
+@media (max-width: 800px) {
+
+  .reference-controls {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 520px) {
+
+  .references-wrap {
+    padding-top: 28px;
+    padding-bottom: 60px;
+  }
+
+  .references-hero {
+    margin-top: 20px;
+    margin-bottom: 24px;
+  }
+
+  .references-hero h1 {
+    font-size: 2.25rem;
+  }
+
+  .references-hero p {
+    font-size: .92rem;
+  }
+
+  .reference-controls {
+    padding: 14px;
+  }
+
+  .reference-card {
+    padding: 20px 18px;
+  }
+
+  .reference-title {
+    font-size: 1.15rem;
+  }
+
+  .reference-meta {
+    font-size: .9rem;
+  }
+
+  .reference-journal {
+    font-size: .85rem;
+  }
+
+  .reference-tag {
+    font-size: .72rem;
+    padding: 4px 9px;
+  }
+
+}
+/* =========================================================
+   文献ページ：産地タグ
+========================================================= */
+
+.reference-tag.locality-all {
+  background: #e1eee8;
+  color: #17624f;
+  border-color: #c8ddd4;
+}
+
+.reference-tag.locality-mainland {
+  background: #eee5d9;
+  color: #765536;
+  border-color: #ddcdbb;
+}
+
+.reference-tag.locality-islands {
+  background: #f3ece2;
+  color: #927457;
+  border-color: #e4d7c6;
+}
+
+.reference-tag.locality-amami {
+  background: #eee6f2;
+  color: #70517d;
+  border-color: #d9c9df;
+}
+
+.reference-tag.locality-other {
+  background: #eef0ef;
+  color: #64706b;
+  border-color: #d9dedb;
+}
