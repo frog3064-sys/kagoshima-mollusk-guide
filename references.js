@@ -120,6 +120,10 @@ function getLocalityClass(locality) {
     [
       "甑島列島",
       "種子島",
+      "黒島",
+      "竹島",
+      "宇治群島",
+      "草垣群島",
       "馬毛島",
       "屋久島",
       "口永良部島",
@@ -156,89 +160,124 @@ function getLocalityClass(locality) {
 }
 
 
-/* =========================================================
-   文献表示
-========================================================= */
+// ------------------------------------------------------------
+// 文献表示
+// ------------------------------------------------------------
 
-function renderReferences(data) {
+function renderReferences(refs) {
 
-  count.textContent = `${data.length} 件の文献`;
+  list.innerHTML = refs.map(r => {
 
-  if (data.length === 0) {
-    list.innerHTML = `
-      <p class="no-results">
-        条件に一致する文献はありません。
-      </p>
+    const author = hasValue(r.author)
+      ? esc(r.author)
+      : "";
+
+    const year = hasValue(r.year)
+      ? `(${esc(r.year)})`
+      : "";
+
+    const title = hasValue(r.title)
+      ? esc(r.title)
+      : "";
+
+    const type = String(r.reference_type ?? "")
+      .trim()
+      .toLowerCase();
+
+    let citation = "";
+
+    // --------------------------------------------------------
+    // book の場合
+    // --------------------------------------------------------
+
+    if (type === "book") {
+
+      const publisher = hasValue(r.publisher)
+        ? esc(r.publisher)
+        : "";
+
+      citation = `
+        ${author} ${year}. ${title}.
+        ${publisher}
+      `;
+
+    }
+
+    // --------------------------------------------------------
+    // 通常の文献
+    // --------------------------------------------------------
+
+    else {
+
+      const journal = hasValue(r.journal)
+        ? `<em>${esc(r.journal)}</em>`
+        : "";
+
+      const volume = hasValue(r.volume)
+        ? esc(r.volume)
+        : "";
+
+      const issue = hasValue(r.issue)
+        ? `(${esc(r.issue)})`
+        : "";
+
+      const pages = hasValue(r.pages)
+        ? esc(r.pages)
+        : "";
+
+      let journalInfo = "";
+
+      if (journal) {
+        journalInfo += `${journal}`;
+      }
+
+      if (volume) {
+        journalInfo += ` ${volume}`;
+      }
+
+      if (issue) {
+        journalInfo += ` ${issue}`;
+      }
+
+      if (pages) {
+        journalInfo += `: ${pages}`;
+      }
+
+      citation = `
+        ${author} ${year}. ${title}.
+        ${journalInfo}.
+      `;
+
+    }
+
+    // --------------------------------------------------------
+    // 備考
+    // --------------------------------------------------------
+
+    const notes = hasValue(r.notes)
+      ? `
+        <div class="reference-notes">
+          <strong>備考：</strong>${esc(r.notes)}
+        </div>
+      `
+      : "";
+
+
+    return `
+      <article class="reference-card">
+
+        <div class="reference-citation">
+          ${citation}
+        </div>
+
+        ${notes}
+
+      </article>
     `;
-    return;
-  }
 
-  list.innerHTML = data.map(r => `
+  }).join("");
 
-    <article class="reference-card">
-
-      ${
-        hasValue(r.author) || hasValue(r.year)
-          ? `
-            <div class="reference-meta">
-              ${hasValue(r.author) ? esc(r.author) : ""}
-              ${hasValue(r.year) ? ` (${esc(r.year)})` : ""}
-            </div>
-          `
-          : ""
-      }
-
-      ${
-        hasValue(r.title)
-          ? `
-            <h2 class="reference-title">
-              ${esc(r.title)}
-            </h2>
-          `
-          : ""
-      }
-
-      ${
-        hasValue(r.journal)
-          ? `
-            <div class="reference-journal">
-              <em>${esc(r.journal)}</em>
-              ${hasValue(r.volume) ? ` ${esc(r.volume)}` : ""}
-              ${hasValue(r.issue) ? `(${esc(r.issue)})` : ""}
-              ${hasValue(r.pages) ? `: ${esc(r.pages)}` : ""}
-            </div>
-          `
-          : ""
-      }
-
-      ${
-        hasValue(r.DOI)
-          ? `
-            <div class="reference-doi">
-              DOI: ${esc(r.DOI)}
-            </div>
-          `
-          : ""
-      }
-
-      <div class="reference-tags">
-        ${
-          String(r.locality ?? "")
-            .split(";")
-            .map(x => x.trim())
-            .filter(x => hasValue(x))
-            .map(x => `
-              <span class="reference-tag ${getLocalityClass(x)}">
-                ${esc(x)}
-              </span>
-            `)
-            .join("")
-        }
-      </div>
-
-    </article>
-
-  `).join("");
+  count.textContent = `${refs.length} 件`;
 }
 
 
