@@ -213,20 +213,19 @@ function makePhotoHTML(photos, speciesID) {
       ${validPhotos.map(photo => `
 
         <figure class="detail-photo">
-
-          <img
-            src="${esc(photo.src)}"
-            alt="${esc(photo.caption)}"
-            loading="lazy"
-          >
-
-          ${
-            hasValue(photo.caption)
-              ? `<figcaption>${esc(photo.caption)}</figcaption>`
-              : ""
-          }
-
-        </figure>
+    <img
+      src="${esc(src)}"
+      alt="${esc(caption)}"
+      loading="lazy"
+      class="zoomable-photo"
+      onclick="openPhotoZoom(this.src, this.alt)"
+    >
+    ${
+      caption
+        ? `<figcaption>${esc(caption)}</figcaption>`
+        : ""
+    }
+  </figure>
 
       `).join("")}
 
@@ -610,7 +609,75 @@ async function loadSpecies() {
     `;
   }
 }
+// ============================================================
+// 写真拡大表示
+// ============================================================
 
+function openPhotoZoom(src, alt) {
+  const overlay = document.createElement("div");
+
+  overlay.className = "photo-zoom-overlay";
+
+  overlay.innerHTML = `
+    <button class="photo-zoom-close" aria-label="閉じる">
+      ×
+    </button>
+
+    <img
+      src="${esc(src)}"
+      alt="${esc(alt)}"
+      class="photo-zoom-image"
+    >
+  `;
+
+  document.body.appendChild(overlay);
+
+  // 背景スクロールを止める
+  document.body.style.overflow = "hidden";
+
+  // ×ボタン
+  overlay
+    .querySelector(".photo-zoom-close")
+    .addEventListener("click", closePhotoZoom);
+
+  // 背景をタップして閉じる
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) {
+      closePhotoZoom();
+    }
+  });
+
+  // 拡大画像をタップして閉じる
+  overlay
+    .querySelector(".photo-zoom-image")
+    .addEventListener("click", closePhotoZoom);
+
+  // ESCキーでも閉じる
+  document.addEventListener("keydown", handlePhotoZoomKey);
+}
+
+
+function closePhotoZoom() {
+  const overlay = document.querySelector(".photo-zoom-overlay");
+
+  if (overlay) {
+    overlay.remove();
+  }
+
+  document.body.style.overflow = "";
+
+  document.removeEventListener(
+    "keydown",
+    handlePhotoZoomKey
+  );
+}
+
+
+function handlePhotoZoomKey(e) {
+  if (e.key === "Escape") {
+    closePhotoZoom();
+  }
+}
 
 // ------------------------------------------------------------
 // 実行

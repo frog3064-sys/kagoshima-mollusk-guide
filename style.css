@@ -1243,3 +1243,84 @@ font-size: 1.35rem;
   color: #64706b;
   border-color: #d9dedb;
 }
+
+/* ============================================================
+   写真拡大表示
+   ============================================================ */
+
+.zoomable-photo {
+  cursor: zoom-in;
+}
+
+
+.photo-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+  box-sizing: border-box;
+
+  background: rgba(0, 0, 0, 0.9);
+
+  cursor: zoom-out;
+}
+
+
+.photo-zoom-image {
+  display: block;
+
+  max-width: 95vw;
+  max-height: 90vh;
+
+  width: auto;
+  height: auto;
+
+  object-fit: contain;
+
+  cursor: zoom-out;
+}
+
+
+.photo-zoom-close {
+  position: absolute;
+
+  top: 12px;
+  right: 16px;
+
+  width: 44px;
+  height: 44px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.9);
+
+  font-size: 32px;
+  line-height: 44px;
+
+  cursor: pointer;
+}
+
+
+@media (max-width: 600px) {
+
+  .photo-zoom-overlay {
+    padding: 10px;
+  }
+
+  .photo-zoom-image {
+    max-width: 100vw;
+    max-height: 90vh;
+  }
+
+  .photo-zoom-close {
+    top: 8px;
+    right: 8px;
+  }
+
+}
