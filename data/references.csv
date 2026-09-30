@@ -1,4 +1,4 @@
-﻿reference_id,sort_number,type,author,author_roman,year,title　図書館に希望＝黄色塗りつぶし,journal,volume,issue,pages,publisher,publisher English,"DOI,URL",language,importance,locality,have,notes
+﻿reference_id,sort_number,reference_type,author,author_roman,year,title,journal,volume,issue,pages,publisher,publisher English,"DOI,URL",language,importance,locality,have,notes
 REF01259,1,thesis,大窪 和理 ,,2019,鹿児島県におけるヤマタニシ属数種の殻形態とDNA多型を用いた系統分類学的研究,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,,Japanese,,,y,
 REF01199,2,report,森田 忠義,"Morita, T.",1994,トカラ列島の動物相,トカラ列島学術調査書,#N/A,#N/A,169–172,#N/A,#N/A,,Japanese,1,,n,
 REF00691,3,journal,川瀬 基弘,"Kawase, M.",,鹿児島県大島郡笠利町節田沖の貝類,豊橋市自然史博物館研究報告 ,9,#N/A,#N/A,#N/A,#N/A,,Japanese,1,奄美大島,n,

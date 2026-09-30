@@ -6,6 +6,10 @@ const searchInput = document.querySelector("#referenceSearch");
 const localitySelect = document.querySelector("#referenceLocality");
 
 
+/* =========================================================
+   CSV parser
+========================================================= */
+
 function csvParse(text) {
   const rows = [];
   let row = [];
@@ -34,12 +38,16 @@ function csvParse(text) {
     }
 
     if ((c === "\n" || c === "\r") && !quoted) {
-      if (c === "\r" && n === "\n") i++;
+      if (c === "\r" && n === "\n") {
+        i++;
+      }
 
       row.push(cell);
       rows.push(row);
+
       row = [];
       cell = "";
+
       continue;
     }
 
@@ -51,14 +59,19 @@ function csvParse(text) {
     rows.push(row);
   }
 
-  if (rows.length === 0) return [];
+  if (rows.length === 0) {
+    return [];
+  }
 
   const headers = rows[0].map(h => h.trim());
 
   return rows
     .slice(1)
-    .filter(row => row.some(cell => cell !== ""))
+    .filter(row =>
+      row.some(cell => String(cell ?? "").trim() !== "")
+    )
     .map(row => {
+
       const obj = {};
 
       headers.forEach((header, i) => {
@@ -70,24 +83,39 @@ function csvParse(text) {
 }
 
 
+/* =========================================================
+   HTML escape
+========================================================= */
+
 function esc(value) {
+
   return String(value ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+
 }
 
 
+/* =========================================================
+   値があるか
+========================================================= */
+
 function hasValue(value) {
+
   const v = String(value ?? "").trim();
 
   return (
     v !== "" &&
     v.toUpperCase() !== "NA" &&
-    v.toUpperCase() !== "#N/A"
+    v.toUpperCase() !== "#N/A" &&
+    v.toUpperCase() !== "N/A" &&
+    v.toLowerCase() !== "null" &&
+    v.toLowerCase() !== "undefined"
   );
+
 }
 
 
@@ -99,10 +127,12 @@ function getLocalityClass(locality) {
 
   const x = String(locality ?? "").trim();
 
+
   // 鹿児島県全域
   if (x === "鹿児島県全域") {
     return "locality-all";
   }
+
 
   // 本土
   if (
@@ -114,6 +144,7 @@ function getLocalityClass(locality) {
   ) {
     return "locality-mainland";
   }
+
 
   // 島しょ域
   if (
@@ -139,6 +170,7 @@ function getLocalityClass(locality) {
     return "locality-islands";
   }
 
+
   // 奄美群島
   if (
     [
@@ -155,40 +187,51 @@ function getLocalityClass(locality) {
     return "locality-amami";
   }
 
+
   // その他
   return "locality-other";
 }
 
 
-// ------------------------------------------------------------
-// 文献表示
-// ------------------------------------------------------------
+/* =========================================================
+   文献表示
+========================================================= */
 
 function renderReferences(refs) {
 
   list.innerHTML = refs.map(r => {
 
+
+    /* -----------------------------------------------------
+       基本情報
+    ----------------------------------------------------- */
+
     const author = hasValue(r.author)
       ? esc(r.author)
       : "";
+
 
     const year = hasValue(r.year)
       ? `(${esc(r.year)})`
       : "";
 
+
     const title = hasValue(r.title)
       ? esc(r.title)
       : "";
+
 
     const type = String(r.reference_type ?? "")
       .trim()
       .toLowerCase();
 
+
     let citation = "";
 
-    // --------------------------------------------------------
-    // book の場合
-    // --------------------------------------------------------
+
+    /* -----------------------------------------------------
+       書籍
+    ----------------------------------------------------- */
 
     if (type === "book") {
 
@@ -196,16 +239,18 @@ function renderReferences(refs) {
         ? esc(r.publisher)
         : "";
 
+
       citation = `
         ${author} ${year}. ${title}.
-        ${publisher}
+        ${publisher}.
       `;
 
     }
 
-    // --------------------------------------------------------
-    // 通常の文献
-    // --------------------------------------------------------
+
+    /* -----------------------------------------------------
+       通常の文献
+    ----------------------------------------------------- */
 
     else {
 
@@ -213,35 +258,54 @@ function renderReferences(refs) {
         ? `<em>${esc(r.journal)}</em>`
         : "";
 
+
       const volume = hasValue(r.volume)
         ? esc(r.volume)
         : "";
+
 
       const issue = hasValue(r.issue)
         ? `(${esc(r.issue)})`
         : "";
 
+
       const pages = hasValue(r.pages)
         ? esc(r.pages)
         : "";
 
+
       let journalInfo = "";
 
+
       if (journal) {
-        journalInfo += `${journal}`;
+        journalInfo += journal;
       }
+
 
       if (volume) {
-        journalInfo += ` ${volume}`;
+
+        if (journalInfo) {
+          journalInfo += " ";
+        }
+
+        journalInfo += volume;
       }
 
+
       if (issue) {
-        journalInfo += ` ${issue}`;
+
+        if (journalInfo) {
+          journalInfo += " ";
+        }
+
+        journalInfo += issue;
       }
+
 
       if (pages) {
         journalInfo += `: ${pages}`;
       }
+
 
       citation = `
         ${author} ${year}. ${title}.
@@ -250,9 +314,53 @@ function renderReferences(refs) {
 
     }
 
-    // --------------------------------------------------------
-    // 備考
-    // --------------------------------------------------------
+
+    /* -----------------------------------------------------
+       DOI / URL
+    ----------------------------------------------------- */
+
+    let doiUrl = "";
+
+    if (hasValue(r["DOI,URL"])) {
+
+      const rawUrl = String(r["DOI,URL"]).trim();
+
+
+      /*
+       * URLが http / https の場合だけリンクにする。
+       * それ以外（DOI文字列など）は通常テキストとして表示。
+       */
+
+      if (/^https?:\/\//i.test(rawUrl)) {
+
+        doiUrl = `
+          <div class="reference-doi">
+            <a
+              href="${esc(rawUrl)}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              ${esc(rawUrl)}
+            </a>
+          </div>
+        `;
+
+      } else {
+
+        doiUrl = `
+          <div class="reference-doi">
+            ${esc(rawUrl)}
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    /* -----------------------------------------------------
+       備考
+    ----------------------------------------------------- */
 
     const notes = hasValue(r.notes)
       ? `
@@ -263,12 +371,33 @@ function renderReferences(refs) {
       : "";
 
 
+    /* -----------------------------------------------------
+       地域
+    ----------------------------------------------------- */
+
+    const locality = hasValue(r.locality)
+      ? `
+        <div class="reference-locality">
+          ${esc(r.locality)}
+        </div>
+      `
+      : "";
+
+
+    /* -----------------------------------------------------
+       カード
+    ----------------------------------------------------- */
+
     return `
       <article class="reference-card">
 
         <div class="reference-citation">
           ${citation}
         </div>
+
+        ${doiUrl}
+
+        ${locality}
 
         ${notes}
 
@@ -277,7 +406,9 @@ function renderReferences(refs) {
 
   }).join("");
 
+
   count.textContent = `${refs.length} 件`;
+
 }
 
 
@@ -287,48 +418,101 @@ function renderReferences(refs) {
 
 function filterReferences(allReferences) {
 
+
   const keyword =
     searchInput.value.trim().toLowerCase();
+
 
   const locality =
     localitySelect.value;
 
-  const filtered = allReferences.filter(r => {
 
-    const searchableText = [
-      r.author,
-      r.author_roman,
-      r.year,
-      r.title,
-      r.journal,
-      r.volume,
-      r.issue,
-      r.pages,
-      r.notes
-    ].join(" ").toLowerCase();
+  const filtered =
+    allReferences.filter(r => {
 
-    if (
-      keyword &&
-      !searchableText.includes(keyword)
-    ) {
-      return false;
-    }
 
-    if (locality) {
+      /* ---------------------------------------------------
+         検索対象
+      --------------------------------------------------- */
 
-      const localities = String(r.locality ?? "")
-        .split(";")
-        .map(x => x.trim());
+      const searchableText = [
 
-      if (!localities.includes(locality)) {
+        r.reference_id,
+
+        r.reference_type,
+
+        r.author,
+
+        r.author_roman,
+
+        r.year,
+
+        r.title,
+
+        r.journal,
+
+        r.volume,
+
+        r.issue,
+
+        r.pages,
+
+        r.publisher,
+
+        r["publisher English"],
+
+        r["DOI,URL"],
+
+        r.language,
+
+        r.locality,
+
+        r.notes
+
+      ]
+        .filter(v => hasValue(v))
+        .join(" ")
+        .toLowerCase();
+
+
+      /* ---------------------------------------------------
+         キーワード検索
+      --------------------------------------------------- */
+
+      if (
+        keyword &&
+        !searchableText.includes(keyword)
+      ) {
         return false;
       }
-    }
 
-    return true;
-  });
+
+      /* ---------------------------------------------------
+         地域絞り込み
+      --------------------------------------------------- */
+
+      if (locality) {
+
+        const localities =
+          String(r.locality ?? "")
+            .split(";")
+            .map(x => x.trim());
+
+
+        if (!localities.includes(locality)) {
+          return false;
+        }
+
+      }
+
+
+      return true;
+
+    });
+
 
   renderReferences(filtered);
+
 }
 
 
@@ -340,90 +524,138 @@ async function loadReferences() {
 
   try {
 
+
+    /* -----------------------------------------------------
+       CSV取得
+    ----------------------------------------------------- */
+
     const response =
       await fetch(DATA_URL);
 
+
     if (!response.ok) {
+
       throw new Error(
         `references.csv の読み込みに失敗しました: ${response.status}`
       );
+
     }
+
 
     const text =
       await response.text();
 
 
     /* -----------------------------------------------------
-       importance → author_roman → year の順に並べる
+       CSV解析
     ----------------------------------------------------- */
 
     const allReferences =
       csvParse(text)
+
+        /*
+         * importance が 1 または 2 の文献だけ表示
+         */
         .filter(r =>
           r.importance === "1" ||
           r.importance === "2"
         )
+
+        /*
+         * sort_number の順番で並べる
+         */
         .sort((a, b) => {
 
-          // ① importance
-          const importanceCompare =
-            Number(a.importance) - Number(b.importance);
+          const sortA =
+            Number(a.sort_number);
 
-          if (importanceCompare !== 0) {
-            return importanceCompare;
+          const sortB =
+            Number(b.sort_number);
+
+
+          /*
+           * 数字が入っているものを先にする。
+           * 空欄・数字でないものは最後。
+           */
+
+          const validA =
+            Number.isFinite(sortA);
+
+          const validB =
+            Number.isFinite(sortB);
+
+
+          if (validA && validB) {
+            return sortA - sortB;
           }
 
-          // ② author_roman
-          const authorCompare =
-            String(a.author_roman ?? "").localeCompare(
-              String(b.author_roman ?? ""),
-              "en",
-              { sensitivity: "base" }
-            );
 
-          if (authorCompare !== 0) {
-            return authorCompare;
+          if (validA) {
+            return -1;
           }
 
-          // ③ year
-          const yearA = Number(a.year);
-          const yearB = Number(b.year);
 
-          if (!Number.isNaN(yearA) && !Number.isNaN(yearB)) {
-            return yearA - yearB;
+          if (validB) {
+            return 1;
           }
 
-          return String(a.year ?? "").localeCompare(
-            String(b.year ?? ""),
-            "en"
-          );
+
+          return 0;
+
         });
 
+
+    /* -----------------------------------------------------
+       初回表示
+    ----------------------------------------------------- */
 
     filterReferences(allReferences);
 
 
+    /* -----------------------------------------------------
+       検索
+    ----------------------------------------------------- */
+
     searchInput.addEventListener("input", () => {
+
       filterReferences(allReferences);
+
     });
 
 
+    /* -----------------------------------------------------
+       地域絞り込み
+    ----------------------------------------------------- */
+
     localitySelect.addEventListener("change", () => {
+
       filterReferences(allReferences);
+
     });
 
 
   } catch (error) {
 
+
     console.error(error);
+
 
     list.innerHTML = `
       <p class="no-results">
         文献データを読み込めませんでした。
       </p>
     `;
+
+
+    count.textContent = "0 件";
+
   }
+
 }
 
+
+/* =========================================================
+   開始
+========================================================= */
 
 loadReferences();
