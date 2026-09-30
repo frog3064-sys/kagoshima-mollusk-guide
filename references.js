@@ -125,73 +125,70 @@ function hasValue(value) {
 
 function getLocalityClass(locality) {
 
-  const x = String(locality ?? "").trim();
-
+  const localities = String(locality ?? "")
+    .split(";")
+    .map(x => x.trim())
+    .filter(x => x !== "");
 
   // 鹿児島県全域
-  if (x === "鹿児島県全域") {
+  if (localities.includes("鹿児島県全域")) {
     return "locality-all";
   }
 
-
-  // 本土
-  if (
-    [
-      "北薩",
-      "南薩",
-      "大隅"
-    ].includes(x)
-  ) {
-    return "locality-mainland";
-  }
-
-
-  // 島しょ域
-  if (
-    [
-      "甑島列島",
-      "種子島",
-      "黒島",
-      "竹島",
-      "宇治群島",
-      "草垣群島",
-      "馬毛島",
-      "屋久島",
-      "口永良部島",
-      "口之島",
-      "中之島",
-      "平島",
-      "諏訪之瀬島",
-      "悪石島",
-      "小宝島",
-      "宝島"
-    ].includes(x)
-  ) {
-    return "locality-islands";
-  }
-
-
   // 奄美群島
-  if (
-    [
-      "奄美大島",
-      "加計呂麻島",
-      "請島",
-      "与路島",
-      "喜界島",
-      "徳之島",
-      "沖永良部島",
-      "与論島"
-    ].includes(x)
-  ) {
+  const amami = [
+    "奄美大島",
+    "加計呂麻島",
+    "請島",
+    "与路島",
+    "喜界島",
+    "徳之島",
+    "沖永良部島",
+    "与論島"
+  ];
+
+  if (localities.some(x => amami.includes(x))) {
     return "locality-amami";
   }
 
+  // 本土
+  const mainland = [
+    "北薩",
+    "南薩",
+    "大隅"
+  ];
+
+  if (localities.some(x => mainland.includes(x))) {
+    return "locality-mainland";
+  }
+
+  // 島しょ域
+  const islands = [
+    "甑島列島",
+    "種子島",
+    "黒島",
+    "竹島",
+    "宇治群島",
+    "草垣群島",
+    "馬毛島",
+    "屋久島",
+    "口永良部島",
+    "口之島",
+    "中之島",
+    "平島",
+    "諏訪之瀬島",
+    "悪石島",
+    "小宝島",
+    "宝島"
+  ];
+
+  if (localities.some(x => islands.includes(x))) {
+    return "locality-islands";
+  }
 
   // その他
   return "locality-other";
 }
-
 
 /* =========================================================
    文献表示
@@ -371,46 +368,45 @@ function renderReferences(refs) {
       : "";
 
 
-    /* -----------------------------------------------------
-       地域
-    ----------------------------------------------------- */
+ /* -----------------------------------------------------
+   種別・地域
+----------------------------------------------------- */
 
-    const locality = hasValue(r.locality)
-      ? `
-        <div class="reference-locality">
-          ${esc(r.locality)}
-        </div>
-      `
-      : "";
+const typeBadge =
+  type === "book"
+    ? `<span class="reference-type book">書籍</span>`
+    : "";
 
+const localityClass = getLocalityClass(r.locality);
 
-    /* -----------------------------------------------------
-       カード
-    ----------------------------------------------------- */
+const locality = hasValue(r.locality)
+  ? `
+      <div class="reference-locality ${localityClass}">
+        ${esc(r.locality)}
+      </div>
+    `
+  : "";
+/* -----------------------------------------------------
+   カード
+----------------------------------------------------- */
 
-    return `
-      <article class="reference-card">
+return `
+  <article class="reference-card">
 
-        <div class="reference-citation">
-          ${citation}
-        </div>
+    <div class="reference-citation">
+      ${citation}
+    </div>
 
-        ${doiUrl}
+    ${doiUrl}
 
-        ${locality}
+    ${typeBadge}
 
-        ${notes}
+    ${locality}
 
-      </article>
-    `;
+    ${notes}
 
-  }).join("");
-
-
-  count.textContent = `${refs.length} 件`;
-
-}
-
+  </article>
+`;
 
 /* =========================================================
    検索・地域絞り込み
