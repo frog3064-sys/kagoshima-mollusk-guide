@@ -280,18 +280,15 @@ function makeIdentificationHTML(value) {
 function makeSpeciesInfoHTML(s) {
 
   const rows = [
-
-    ["和名", s.和名],
-    ["学名", s.学名],
-    ["科", s.科],
-    ["属", s.属],
-    ["産地", s.産地_公開],
-    ["水深", s.水深],
-    ["生息環境", s.生息環境],
-    ["緯度", s.緯度],
-    ["経度", s.経度]
-
-  ].filter(row => hasValue(row[1]));
+  ["科", s.科],
+  ["属", s.属],
+  ["生息区分", s.生息区分],
+  ["産地", s.産地_公開],
+  ["水深", s.水深],
+  ["生息環境", s.生息環境],
+  ["緯度", s.緯度],
+  ["経度", s.経度]
+].filter(row => hasValue(row[1]));
 
 
   if (rows.length === 0) {
