@@ -194,10 +194,10 @@ function getLocalityClass(locality) {
    文献表示
 ========================================================= */
 
+```js
 function renderReferences(refs) {
 
   list.innerHTML = refs.map(r => {
-
 
     /* -----------------------------------------------------
        基本情報
@@ -207,77 +207,54 @@ function renderReferences(refs) {
       ? esc(r.author)
       : "";
 
-
     const year = hasValue(r.year)
       ? `(${esc(r.year)})`
       : "";
 
-
     const title = hasValue(r.title)
       ? esc(r.title)
       : "";
-
 
     const type = String(r.reference_type ?? "")
       .trim()
       .toLowerCase();
 
 
-    let citation = "";
-
-
     /* -----------------------------------------------------
-       書籍
+       雑誌名・巻号・ページ
     ----------------------------------------------------- */
+
+    let journalInfo = "";
+    let publisher = "";
 
     if (type === "book") {
 
-      const publisher = hasValue(r.publisher)
+      publisher = hasValue(r.publisher)
         ? esc(r.publisher)
         : "";
 
-
-      citation = `
-        ${author} ${year}. ${title}.
-        ${publisher}.
-      `;
-
-    }
-
-
-    /* -----------------------------------------------------
-       通常の文献
-    ----------------------------------------------------- */
-
-    else {
+    } else {
 
       const journal = hasValue(r.journal)
         ? `<em>${esc(r.journal)}</em>`
         : "";
 
-
       const volume = hasValue(r.volume)
         ? esc(r.volume)
         : "";
 
-
       const issue = hasValue(r.issue)
         ? `(${esc(r.issue)})`
         : "";
-
 
       const pages = hasValue(r.pages)
         ? esc(r.pages)
         : "";
 
 
-      let journalInfo = "";
-
-
       if (journal) {
         journalInfo += journal;
       }
-
 
       if (volume) {
 
@@ -288,7 +265,6 @@ function renderReferences(refs) {
         journalInfo += volume;
       }
 
-
       if (issue) {
 
         if (journalInfo) {
@@ -298,16 +274,14 @@ function renderReferences(refs) {
         journalInfo += issue;
       }
 
-
       if (pages) {
-        journalInfo += `: ${pages}`;
+
+        if (journalInfo) {
+          journalInfo += ": ";
+        }
+
+        journalInfo += pages;
       }
-
-
-      citation = `
-        ${author} ${year}. ${title}.
-        ${journalInfo}.
-      `;
 
     }
 
@@ -320,13 +294,9 @@ function renderReferences(refs) {
 
     if (hasValue(r["DOI,URL"])) {
 
-      const rawUrl = String(r["DOI,URL"]).trim();
+      const rawUrl =
+        String(r["DOI,URL"]).trim();
 
-
-      /*
-       * URLが http / https の場合だけリンクにする。
-       * それ以外（DOI文字列など）は通常テキストとして表示。
-       */
 
       if (/^https?:\/\//i.test(rawUrl)) {
 
@@ -368,51 +338,79 @@ function renderReferences(refs) {
       : "";
 
 
- /* -----------------------------------------------------
-   種別・地域
------------------------------------------------------ */
+    /* -----------------------------------------------------
+       種別
+    ----------------------------------------------------- */
 
-const typeBadge =
-  type === "book"
-    ? `<span class="reference-type book">書籍</span>`
-    : "";
+    const typeBadge =
+      type === "book"
+        ? `<span class="reference-type book">書籍</span>`
+        : "";
 
-const localityClass = getLocalityClass(r.locality);
 
-const locality = hasValue(r.locality)
-  ? `
-      <div class="reference-locality ${localityClass}">
-        ${esc(r.locality)}
-      </div>
-    `
-  : "";
-/* -----------------------------------------------------
-   カード
------------------------------------------------------ */
+    /* -----------------------------------------------------
+       地域
+    ----------------------------------------------------- */
 
-return `
-  <article class="reference-card">
+    const localityClass =
+      getLocalityClass(r.locality);
 
-    <div class="reference-citation">
-      ${citation}
-    </div>
+    const locality =
+      hasValue(r.locality)
+        ? `
+          <div class="reference-locality ${localityClass}">
+            ${esc(r.locality)}
+          </div>
+        `
+        : "";
 
-    ${doiUrl}
 
-    ${typeBadge}
+    /* -----------------------------------------------------
+       カード
+    ----------------------------------------------------- */
 
-    ${locality}
+    return `
+      <article class="reference-card">
 
-    ${notes}
+        <div class="reference-title">
+          ${title}
+        </div>
 
-  </article>
-`;
+        <div class="reference-author">
+          ${author}${year ? ` ${year}` : ""}
+        </div>
+
+        ${
+          journalInfo
+            ? `<div class="reference-journal">${journalInfo}</div>`
+            : ""
+        }
+
+        ${
+          publisher
+            ? `<div class="reference-journal">${publisher}</div>`
+            : ""
+        }
+
+        ${doiUrl}
+
+        ${typeBadge}
+
+        ${locality}
+
+        ${notes}
+
+      </article>
+    `;
 
   }).join("");
 
   count.textContent = `${refs.length} 件`;
 
 }
+```
+
+
 
 /* =========================================================
    検索・地域絞り込み
