@@ -214,8 +214,8 @@ function makePhotoHTML(photos, speciesID) {
 
         <figure class="detail-photo">
     <img
-      src="${esc(src)}"
-      alt="${esc(caption)}"
+      src="${esc(photo.src)}"
+alt="${esc(photo.caption)}"
       loading="lazy"
       class="zoomable-photo"
       onclick="openPhotoZoom(this.src, this.alt)"
