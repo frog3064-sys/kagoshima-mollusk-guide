@@ -1214,36 +1214,58 @@ font-size: 1.35rem;
    文献ページ：産地タグ
 ========================================================= */
 
-.reference-tag.locality-all {
+.reference-locality {
+  display: inline-block;
+
+  margin-top: 16px;
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  font-size: .76rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+
+/* 鹿児島県全域 */
+.reference-locality.locality-all {
   background: #e1eee8;
   color: #17624f;
-  border-color: #c8ddd4;
+  border: 1px solid #c8ddd4;
 }
 
-.reference-tag.locality-mainland {
+
+/* 本土 */
+.reference-locality.locality-mainland {
   background: #eee5d9;
   color: #765536;
-  border-color: #ddcdbb;
+  border: 1px solid #ddcdbb;
 }
 
-.reference-tag.locality-islands {
+
+/* 島しょ */
+.reference-locality.locality-islands {
   background: #f3ece2;
   color: #927457;
-  border-color: #e4d7c6;
+  border: 1px solid #e4d7c6;
 }
 
-.reference-tag.locality-amami {
+
+/* 奄美群島 */
+.reference-locality.locality-amami {
   background: #eee6f2;
   color: #70517d;
-  border-color: #d9c9df;
+  border: 1px solid #d9c9df;
 }
 
-.reference-tag.locality-other {
+
+/* その他 */
+.reference-locality.locality-other {
   background: #eef0ef;
   color: #64706b;
-  border-color: #d9dedb;
+  border: 1px solid #d9dedb;
 }
-
 /* ============================================================
    写真拡大表示
    ============================================================ */
