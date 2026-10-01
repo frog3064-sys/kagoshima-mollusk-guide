@@ -181,10 +181,11 @@ function makePhotoHTML(photos, speciesID) {
         "";
 
       const caption =
-        p.キャプション ||
-        p.Caption ||
-        p.caption ||
-        "";
+  p.備考 ||
+  p.キャプション ||
+  p.Caption ||
+  p.caption ||
+  "";
 
       return {
         src: String(src).trim(),
