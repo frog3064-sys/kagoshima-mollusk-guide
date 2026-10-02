@@ -1211,60 +1211,36 @@ font-size: 1.35rem;
 
 }
 /* =========================================================
-   文献ページ：産地タグ
+   文献：地域ラベル
 ========================================================= */
 
-.reference-locality {
-  display: inline-block;
-
-  margin-top: 16px;
-  padding: 4px 10px;
-
-  border-radius: 999px;
-
-  font-size: .76rem;
-  font-weight: 700;
-  line-height: 1.4;
+/* 渡瀬線以北 */
+.reference-locality.locality-mainland,
+.reference-locality.locality-islands {
+  background: #dcecff;
+  color: #1769aa;
+  border-color: #9fc5e8;
 }
 
+/* 渡瀬線以南 */
+.reference-locality.locality-amami {
+  background: #dff3e4;
+  color: #237a45;
+  border-color: #a8d5b5;
+}
 
 /* 鹿児島県全域 */
 .reference-locality.locality-all {
-  background: #e1eee8;
-  color: #17624f;
-  border: 1px solid #c8ddd4;
+  background: #e8eef2;
+  color: #3f5968;
+  border-color: #c4d0d8;
 }
-
-
-/* 本土 */
-.reference-locality.locality-mainland {
-  background: #eee5d9;
-  color: #765536;
-  border: 1px solid #ddcdbb;
-}
-
-
-/* 島しょ */
-.reference-locality.locality-islands {
-  background: #f3ece2;
-  color: #927457;
-  border: 1px solid #e4d7c6;
-}
-
-
-/* 奄美群島 */
-.reference-locality.locality-amami {
-  background: #eee6f2;
-  color: #70517d;
-  border: 1px solid #d9c9df;
-}
-
 
 /* その他 */
 .reference-locality.locality-other {
-  background: #eef0ef;
-  color: #64706b;
-  border: 1px solid #d9dedb;
+  background: #f0f0f0;
+  color: #666;
+  border-color: #d2d2d2;
 }
 /* ============================================================
    写真拡大表示
