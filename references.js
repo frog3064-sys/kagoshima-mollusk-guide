@@ -194,7 +194,6 @@ function getLocalityClass(locality) {
    文献表示
 ========================================================= */
 
-```js
 function renderReferences(refs) {
 
   list.innerHTML = refs.map(r => {
@@ -408,7 +407,6 @@ function renderReferences(refs) {
   count.textContent = `${refs.length} 件`;
 
 }
-```
 
 
 
