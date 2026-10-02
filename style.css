@@ -1214,26 +1214,32 @@ font-size: 1.35rem;
    文献：地域ラベル
 ========================================================= */
 
-/* 渡瀬線以北 */
-.reference-locality.locality-mainland,
+/* 鹿児島県全域 */
+.reference-locality.locality-all {
+  background: #dff3e4;
+  color: #237a45;
+  border-color: #a8d5b5;
+}
+
+/* 本土 */
+.reference-locality.locality-mainland {
+  background: #dcecff;
+  color: #1769aa;
+  border-color: #9fc5e8;
+}
+
+/* 島しょ域 */
 .reference-locality.locality-islands {
   background: #dcecff;
   color: #1769aa;
   border-color: #9fc5e8;
 }
 
-/* 渡瀬線以南 */
+/* 奄美群島 */
 .reference-locality.locality-amami {
   background: #dff3e4;
   color: #237a45;
   border-color: #a8d5b5;
-}
-
-/* 鹿児島県全域 */
-.reference-locality.locality-all {
-  background: #e8eef2;
-  color: #3f5968;
-  border-color: #c4d0d8;
 }
 
 /* その他 */
