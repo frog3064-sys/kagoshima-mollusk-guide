@@ -1214,39 +1214,83 @@ font-size: 1.35rem;
    文献：地域ラベル
 ========================================================= */
 
-/* 鹿児島県全域 */
-.reference-locality.locality-all {
-  background: #dff3e4;
-  color: #237a45;
-  border-color: #a8d5b5;
+.reference-locality-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
 }
 
-/* 本土 */
+
+/* ---------------------------------------------------------
+   渡瀬線以北
+--------------------------------------------------------- */
+
 .reference-locality.locality-mainland {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 999px;
+
   background: #dcecff;
   color: #1769aa;
-  border-color: #9fc5e8;
+  border: 1px solid #9fc5e8;
+
+  font-size: 0.82rem;
+  line-height: 1.3;
 }
 
-/* 島しょ域 */
-.reference-locality.locality-islands {
-  background: #dcecff;
-  color: #1769aa;
-  border-color: #9fc5e8;
-}
 
-/* 奄美群島 */
+/* ---------------------------------------------------------
+   渡瀬線以南
+--------------------------------------------------------- */
+
 .reference-locality.locality-amami {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 999px;
+
   background: #dff3e4;
   color: #237a45;
-  border-color: #a8d5b5;
+  border: 1px solid #a8d5b5;
+
+  font-size: 0.82rem;
+  line-height: 1.3;
 }
 
-/* その他 */
+
+/* ---------------------------------------------------------
+   鹿児島県全域
+--------------------------------------------------------- */
+
+.reference-locality.locality-all {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 999px;
+
+  background: #e8eef2;
+  color: #3f5968;
+  border: 1px solid #c4d0d8;
+
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
+
+/* ---------------------------------------------------------
+   その他
+--------------------------------------------------------- */
+
 .reference-locality.locality-other {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 999px;
+
   background: #f0f0f0;
   color: #666;
-  border-color: #d2d2d2;
+  border: 1px solid #d2d2d2;
+
+  font-size: 0.82rem;
+  line-height: 1.3;
 }
 /* ============================================================
    写真拡大表示
