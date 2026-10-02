@@ -119,76 +119,6 @@ function hasValue(value) {
 }
 
 
-/* =========================================================
-   産地の地域分類
-========================================================= */
-
-function getLocalityClass(locality) {
-
-  const localities = String(locality ?? "")
-    .split(";")
-    .map(x => x.trim())
-    .filter(x => x !== "");
-
-  // 鹿児島県全域
-  if (localities.includes("鹿児島県全域")) {
-    return "locality-all";
-  }
-
-  // 奄美群島
-  const amami = [
-    "奄美大島",
-    "加計呂麻島",
-    "請島",
-    "与路島",
-    "喜界島",
-    "徳之島",
-    "沖永良部島",
-    "与論島"
-  ];
-
-  if (localities.some(x => amami.includes(x))) {
-    return "locality-amami";
-  }
-
-  // 本土
-  const mainland = [
-    "北薩",
-    "南薩",
-    "大隅"
-  ];
-
-  if (localities.some(x => mainland.includes(x))) {
-    return "locality-mainland";
-  }
-
-  // 島しょ域
-  const islands = [
-    "甑島列島",
-    "種子島",
-    "黒島",
-    "竹島",
-    "宇治群島",
-    "草垣群島",
-    "馬毛島",
-    "屋久島",
-    "口永良部島",
-    "口之島",
-    "中之島",
-    "平島",
-    "諏訪之瀬島",
-    "悪石島",
-    "小宝島",
-    "宝島"
-  ];
-
-  if (localities.some(x => islands.includes(x))) {
-    return "locality-islands";
-  }
-
-  // その他
-  return "locality-other";
-}
 
 /* =========================================================
    文献表示
@@ -198,7 +128,6 @@ function renderReferences(refs) {
 
   list.innerHTML = refs.map(r => {
 
-
     /* -----------------------------------------------------
        基本情報
     ----------------------------------------------------- */
@@ -207,77 +136,54 @@ function renderReferences(refs) {
       ? esc(r.author)
       : "";
 
-
     const year = hasValue(r.year)
       ? `(${esc(r.year)})`
       : "";
 
-
     const title = hasValue(r.title)
       ? esc(r.title)
       : "";
-
 
     const type = String(r.reference_type ?? "")
       .trim()
       .toLowerCase();
 
 
-    let citation = "";
-
-
     /* -----------------------------------------------------
-       書籍
+       雑誌名・巻号・ページ
     ----------------------------------------------------- */
+
+    let journalInfo = "";
+    let publisher = "";
 
     if (type === "book") {
 
-      const publisher = hasValue(r.publisher)
+      publisher = hasValue(r.publisher)
         ? esc(r.publisher)
         : "";
 
-
-      citation = `
-        ${author} ${year}. ${title}.
-        ${publisher}.
-      `;
-
-    }
-
-
-    /* -----------------------------------------------------
-       通常の文献
-    ----------------------------------------------------- */
-
-    else {
+    } else {
 
       const journal = hasValue(r.journal)
         ? `<em>${esc(r.journal)}</em>`
         : "";
 
-
       const volume = hasValue(r.volume)
         ? esc(r.volume)
         : "";
 
-
       const issue = hasValue(r.issue)
         ? `(${esc(r.issue)})`
         : "";
-
 
       const pages = hasValue(r.pages)
         ? esc(r.pages)
         : "";
 
 
-      let journalInfo = "";
-
-
       if (journal) {
         journalInfo += journal;
       }
-
 
       if (volume) {
 
@@ -288,7 +194,6 @@ function renderReferences(refs) {
         journalInfo += volume;
       }
 
-
       if (issue) {
 
         if (journalInfo) {
@@ -298,16 +203,14 @@ function renderReferences(refs) {
         journalInfo += issue;
       }
 
-
       if (pages) {
-        journalInfo += `: ${pages}`;
+
+        if (journalInfo) {
+          journalInfo += ": ";
+        }
+
+        journalInfo += pages;
       }
-
-
-      citation = `
-        ${author} ${year}. ${title}.
-        ${journalInfo}.
-      `;
 
     }
 
@@ -320,13 +223,9 @@ function renderReferences(refs) {
 
     if (hasValue(r["DOI,URL"])) {
 
-      const rawUrl = String(r["DOI,URL"]).trim();
+      const rawUrl =
+        String(r["DOI,URL"]).trim();
 
-
-      /*
-       * URLが http / https の場合だけリンクにする。
-       * それ以外（DOI文字列など）は通常テキストとして表示。
-       */
 
       if (/^https?:\/\//i.test(rawUrl)) {
 
@@ -368,45 +267,130 @@ function renderReferences(refs) {
       : "";
 
 
- /* -----------------------------------------------------
-   種別・地域
+    /* -----------------------------------------------------
+       種別
+    ----------------------------------------------------- */
+
+    const typeBadge =
+      type === "book"
+        ? `<span class="reference-type book">書籍</span>`
+        : "";
+
+    /* -----------------------------------------------------
+   地域
 ----------------------------------------------------- */
 
-const typeBadge =
-  type === "book"
-    ? `<span class="reference-type book">書籍</span>`
+const mainland = [
+  "北薩",
+  "南薩",
+  "大隅",
+  "甑島列島",
+  "種子島",
+  "黒島",
+  "竹島",
+  "宇治群島",
+  "草垣群島",
+  "馬毛島",
+  "屋久島",
+  "口永良部島",
+  "口之島",
+  "中之島",
+  "平島",
+  "諏訪之瀬島",
+  "悪石島",
+  "小宝島",
+  "宝島"
+];
+
+const amami = [
+  "奄美大島",
+  "加計呂麻島",
+  "請島",
+  "与路島",
+  "喜界島",
+  "徳之島",
+  "沖永良部島",
+  "与論島"
+];
+
+const localities = String(r.locality ?? "")
+  .split(";")
+  .map(x => x.trim())
+  .filter(x => x !== "");
+
+const locality =
+  localities.length > 0
+    ? `
+        <div class="reference-locality-list">
+          ${localities.map(loc => {
+
+            let localityClass = "locality-other";
+
+            if (loc === "鹿児島県全域") {
+              localityClass = "locality-all";
+            } else if (amami.includes(loc)) {
+              localityClass = "locality-amami";
+            } else if (mainland.includes(loc)) {
+              localityClass = "locality-mainland";
+            }
+
+            return `
+              <span class="reference-locality ${localityClass}">
+                ${esc(loc)}
+              </span>
+            `;
+
+          }).join("")}
+        </div>
+      `
     : "";
 
-const localityClass = getLocalityClass(r.locality);
 
-const locality = hasValue(r.locality)
-  ? `
-      <div class="reference-locality ${localityClass}">
-        ${esc(r.locality)}
-      </div>
-    `
-  : "";
-/* -----------------------------------------------------
-   カード
------------------------------------------------------ */
+    /* -----------------------------------------------------
+       カード
+    ----------------------------------------------------- */
 
-return `
-  <article class="reference-card">
+    return `
+      <article class="reference-card">
 
-    <div class="reference-citation">
-      ${citation}
-    </div>
+        <div class="reference-title">
+          ${title}
+        </div>
 
-    ${doiUrl}
+        <div class="reference-author">
+          ${author}${year ? ` ${year}` : ""}
+        </div>
 
-    ${typeBadge}
+        ${
+          journalInfo
+            ? `<div class="reference-journal">${journalInfo}</div>`
+            : ""
+        }
 
-    ${locality}
+        ${
+          publisher
+            ? `<div class="reference-journal">${publisher}</div>`
+            : ""
+        }
 
-    ${notes}
+        ${doiUrl}
 
-  </article>
-`;
+        ${typeBadge}
+
+        ${locality}
+
+        ${notes}
+
+      </article>
+    `;
+
+  }).join("");
+
+  count.textContent = `${refs.length} 件`;
+
+}
+
+
 
 /* =========================================================
    検索・地域絞り込み

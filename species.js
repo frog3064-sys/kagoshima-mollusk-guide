@@ -181,10 +181,11 @@ function makePhotoHTML(photos, speciesID) {
         "";
 
       const caption =
-        p.キャプション ||
-        p.Caption ||
-        p.caption ||
-        "";
+  p.備考 ||
+  p.キャプション ||
+  p.Caption ||
+  p.caption ||
+  "";
 
       return {
         src: String(src).trim(),
@@ -212,22 +213,25 @@ function makePhotoHTML(photos, speciesID) {
 
       ${validPhotos.map(photo => `
 
-        <figure class="detail-photo">
+  <figure class="detail-photo">
+
     <img
       src="${esc(photo.src)}"
-alt="${esc(photo.caption)}"
+      alt="${esc(photo.caption)}"
       loading="lazy"
       class="zoomable-photo"
       onclick="openPhotoZoom(this.src, this.alt)"
     >
+
     ${
-      caption
-        ? `<figcaption>${esc(caption)}</figcaption>`
+      photo.caption
+        ? `<figcaption>${esc(photo.caption)}</figcaption>`
         : ""
     }
+
   </figure>
 
-      `).join("")}
+`).join("")}
 
     </div>
   `;
