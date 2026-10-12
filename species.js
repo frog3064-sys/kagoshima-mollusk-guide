@@ -181,11 +181,11 @@ function makePhotoHTML(photos, speciesID) {
         "";
 
       const caption =
-  p.備考 ||
-  p.キャプション ||
-  p.Caption ||
-  p.caption ||
-  "";
+        p.備考 ||
+        p.キャプション ||
+        p.Caption ||
+        p.caption ||
+        "";
 
       return {
         src: String(src).trim(),
@@ -210,69 +210,66 @@ function makePhotoHTML(photos, speciesID) {
   // 写真あり
   return `
     <div class="detail-photos">
+// ------------------------------------------------------------
+// 産地ラベル
+// ------------------------------------------------------------
 
-      ${validPhotos.map(photo => `
+function getLocalityClass(locality) {
+  const value = String(locality ?? "").trim();
 
-  <figure class="detail-photo">
+  if (["鹿児島湾", "錦江湾"].includes(value)) {
+    return "locality-sea";
+  }
 
-    <img
-      src="${esc(photo.src)}"
-      alt="${esc(photo.caption)}"
-      loading="lazy"
-      class="zoomable-photo"
-      onclick="openPhotoZoom(this.src, this.alt)"
-    >
+  if (value === "鹿児島県全域") {
+    return "locality-all";
+  }
 
-    ${
-      photo.caption
-        ? `<figcaption>${esc(photo.caption)}</figcaption>`
-        : ""
-    }
+  if ([
+    "北薩", "南薩", "大隅", "鹿児島市",
+    "薩摩半島", "大隅半島"
+  ].includes(value)) {
+    return "locality-mainland";
+  }
 
-  </figure>
+  if ([
+    "奄美大島", "加計呂麻島", "請島", "与路島",
+    "喜界島", "徳之島", "沖永良部島", "与論島"
+  ].includes(value)) {
+    return "locality-amami";
+  }
 
-`).join("")}
+  if ([
+    "甑島列島", "種子島", "黒島", "竹島", "宇治群島",
+    "草垣群島", "馬毛島", "屋久島", "口永良部島",
+    "口之島", "中之島", "平島", "諏訪之瀬島",
+    "悪石島", "小宝島", "宝島"
+  ].includes(value)) {
+    return "locality-islands";
+  }
 
-    </div>
-  `;
+  return "locality-other";
 }
 
 
-// ------------------------------------------------------------
-// 同定のポイント
-// ------------------------------------------------------------
+function renderLocalityTags(value) {
+  const localities = [...new Set(
+    String(value ?? "")
+      .split(/[,，、\r\n]+/)
+      .map(locality => locality.trim())
+      .filter(locality => hasValue(locality))
+  )];
 
-function makeIdentificationHTML(value) {
-
-  if (!hasValue(value)) {
+  if (localities.length === 0) {
     return "";
   }
-
-  const points = String(value)
-    .split(/[;\n]/)
-    .map(point => point.trim())
-    .filter(point => hasValue(point));
-
-
-  if (points.length === 0) {
-    return "";
-  }
-
 
   return `
-    <section class="detail-section">
-
-      <h2>同定のポイント</h2>
-
-      <ul class="identification-points">
-
-        ${points.map(point => `
-          <li>${esc(point)}</li>
-        `).join("")}
-
-      </ul>
-
-    </section>
+    <span class="locality-tags">
+      ${localities.map(locality => `
+        <span class="locality-tag ${getLocalityClass(locality)}">${esc(locality)}</span>
+      `).join("")}
+    </span>
   `;
 }
 
@@ -284,15 +281,15 @@ function makeIdentificationHTML(value) {
 function makeSpeciesInfoHTML(s) {
 
   const rows = [
-  ["科", s.科],
-  ["属", s.属],
-  ["生息区分", s.生息区分],
-  ["産地", s.産地_公開],
-  ["水深", s.水深],
-  ["生息環境", s.生息環境],
-  ["緯度", s.緯度],
-  ["経度", s.経度]
-].filter(row => hasValue(row[1]));
+    ["科", s.科],
+    ["属", s.属],
+    ["生息区分", s.生息区分],
+    ["産地", s.産地_公開],
+    ["水深", s.水深],
+    ["生息環境", s.生息環境],
+    ["緯度", s.緯度],
+    ["経度", s.経度]
+  ].filter(row => hasValue(row[1]));
 
 
   if (rows.length === 0) {
@@ -316,7 +313,11 @@ function makeSpeciesInfoHTML(s) {
               <th>${esc(row[0])}</th>
 
               <td>
-                ${esc(row[1]).replaceAll(";", "・")}
+                ${
+                  row[0] === "産地"
+                    ? renderLocalityTags(row[1])
+                    : esc(row[1]).replaceAll(";", "・")
+                }
               </td>
 
             </tr>
@@ -330,8 +331,6 @@ function makeSpeciesInfoHTML(s) {
     </section>
   `;
 }
-
-
 // ------------------------------------------------------------
 // 参考資料
 // ------------------------------------------------------------
@@ -500,7 +499,6 @@ async function loadSpecies() {
 
     const referencesHTML =
       makeReferencesHTML(s.文献);
-
     const notesHTML =
       makeNotesHTML(s.備考);
 
@@ -610,6 +608,8 @@ async function loadSpecies() {
     `;
   }
 }
+
+
 // ============================================================
 // 写真拡大表示
 // ============================================================
@@ -679,6 +679,7 @@ function handlePhotoZoomKey(e) {
     closePhotoZoom();
   }
 }
+
 
 // ------------------------------------------------------------
 // 実行

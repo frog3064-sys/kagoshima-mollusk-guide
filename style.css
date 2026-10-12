@@ -1372,3 +1372,64 @@ font-size: 1.35rem;
   }
 
 }
+
+/* ========================================
+   産地ラベル：共通デザイン
+======================================== */
+
+.locality-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.locality-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  font-weight: 500;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.locality-tag.locality-mainland {
+  color: #284e80;
+  background: #e7eef8;
+  border-color: #c5d6ed;
+}
+
+.locality-tag.locality-islands {
+  color: #276749;
+  background: #e3f2e8;
+  border-color: #b9dfc6;
+}
+
+.locality-tag.locality-amami {
+  color: #92501c;
+  background: #fbe8d5;
+  border-color: #f0d0ae;
+}
+
+.locality-tag.locality-sea {
+  color: #176b75;
+  background: #def2f3;
+  border-color: #b3dfe2;
+}
+
+.locality-tag.locality-all {
+  color: #62458a;
+  background: #eee7f7;
+  border-color: #d8c8eb;
+}
+
+.locality-tag.locality-other {
+  color: #50545a;
+  background: #f0f1f3;
+  border-color: #d9dce1;
+}
